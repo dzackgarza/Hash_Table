@@ -18,6 +18,7 @@ class HashTable
 {
     DLList contents[MAX_HASH_SIZE];
 
+public:
 // Post: An empty HashTable is created and initialized
 HashTable( );
 
@@ -43,6 +44,13 @@ void Delete ( const KeyType& key );
 
 // Post: Returns true if there is nothing in the HashTable
 bool IsEmpty ( ) const;
+
+void PrintTable();
+
+private:
+
+unsigned Hash_Function( const KeyType&) const;
+
 
 };
 #endif

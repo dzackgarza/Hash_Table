@@ -105,3 +105,19 @@ void DLList::Display ( void )
     }
     cursor = temp_cursor;
 }
+
+//Post: If the list was empty then ITEM is the only item in the
+//list. Otherwise, ITEM is inserted into the list so that the
+//list is ordered from first key to last key.
+void DLList::OrderedInsert ( const ItemType& ITEM )
+{
+    if ( IsEmpty() )
+        InsertAfter(ITEM);
+    else
+    {
+        Reset();
+        while (cursor->next != NULL && ITEM > cursor->next->data)
+            Advance();
+        InsertAfter(ITEM);
+    }
+}

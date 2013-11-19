@@ -13,76 +13,91 @@
 
 using namespace std;
 
-// Post: An empty HashTable is created and initialized
 HashTable::HashTable( ) { }
 
-// Post: The HashTable is destroyed and all memory is released
 HashTable::~HashTable( )
 {
-    for (unsigned i = 0; i < MAX_HASH_SIZE; i++)
-        contents[i].Delete();
+    //for (unsigned i = 0; i < MAX_HASH_SIZE; i++)
+        //contents[i].Delete();
 }
 
-// Pre:  There is room in the HashTable
-// Post: The ItemType is inserted into the HashTable
-// according to its key
-void HashTable::Insert ( const ItemType& )
+void HashTable::Insert ( const ItemType& item)
 {
-    // Hash Item
-    // Insert into Hash Table
-    // Relegate to DLList to insert
+    unsigned key = Hash_Function( item.Key() );
+    contents[key].OrderedInsert(item);
 }
 
-// Pre:  The HashTable is not empty
-// Post: The ItemType with this key is returned.
-// If the table does not contain an ItemType with this key it
-// returns ItemType (“KEY NOT FOUND”,”KEY NOT FOUND”)
-ItemType HashTable::Retrieve ( const KeyType& key )
+ItemType HashTable::Retrieve ( const KeyType& k )
 {
+    // No use searching an empty Hash Table
+    if ( !(this->IsEmpty()) )
+    {
+        unsigned key = Hash_Function(k);
+        contents[key].Reset();
+        while ( !(contents[key].EndOfList()) )
+        {
+            if ( contents[key].CurrentItem().Key() == k)
+                return contents[key].CurrentItem();
+            else
+                contents[key].Advance();
+        }
+    }
+    return ItemType("KNF","KEY NOT FOUND");
+}
+
+void HashTable::Delete ( const KeyType& k )
+{
+    // Return immediately if position of key is empty.
     if (!IsEmpty())
     {
-        // Search the table for the key and return a reference to it.
-        // If found, return item
-        // else return Record("KNF", "KEY NOT FOUND");
+        unsigned key = Hash_Function(k);
+
+        // Search through list from beginning for a Record with a matching key.
+        // Deletes all occurences that are found.
+        contents[key].Reset();
+        while ( !(contents[key].EndOfList()) )
+        {
+            if ( contents[key].CurrentItem().Key() == k)
+                contents[key].Delete();
+            else
+                contents[key].Advance();
+        }
     }
 }
 
-// Pre: The HashTable is not empty
-// Post: The ItemType with this key is removed from the
-// HashTable
-// If the key is not found, it does nothing
-void HashTable::Delete ( const KeyType& key )
-{
-    if (!IsEmpty())
-    {
-        // Search the table for the key and delete it.
-    }
-}
-
-// Post: Returns true if there is nothing in the HashTable
 bool HashTable::IsEmpty ( ) const
 {
-    bool has_item = false;
+    bool hasItem = false;
     for (int i = 0; i < MAX_HASH_SIZE; i++)
     {
-        if (this->contents[i].IsEmpty() == false) has_item = true;
+        if (this->contents[i].IsEmpty() == false)
+            hasItem = true;
     }
-    return has_item;
+    return !hasItem;
 }
 
 /************************** Helper Functions **********************/
 
 // Given an item, generates a hash for it that is as unique as possible.
-unsigned Hash_Function( const ItemType& R)
+unsigned HashTable::Hash_Function( const KeyType& R) const
 {
-    unsigned index;
-
+    unsigned index = 0;
     // Go through each character in the STRING
-    for (unsigned i = 0; i < R.Key().length(); i++)
+    for (unsigned i = 0; i < R.length(); i++)
     {
         // Sum the values of each character, weighted by its position in the STRING.
-        index += R.Key()[i] * (i+1);
+        index += (R[i] << 5) * (i+1) + (35*R[i]) % MAX_HASH_SIZE;
     }
     // Modulo, so it will fit into the Hash Table
     return (index % MAX_HASH_SIZE);
+}
+
+void HashTable::PrintTable()
+{
+    for(unsigned i = 0; i < MAX_HASH_SIZE; i++)
+    {
+        cout << "Index: " <<i<<" || Contents: "<<endl;
+        contents[i].Display();
+        cout << "-----------------------------------"<<endl;
+    }
 }

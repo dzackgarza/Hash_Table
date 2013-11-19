@@ -11,7 +11,7 @@
 #define DLL_CLASS_H
 #include <string>
 #include "Record.h"
-#define ItemType Record
+typedef Record ItemType;
 
 /**
 Class Invariants:
