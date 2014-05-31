@@ -120,5 +120,7 @@ void Display ( void );
 //list is ordered from first key to last key.
 void OrderedInsert ( /*in*/ const ItemType& ITEM );
 
+unsigned getLength();
+
 };
 #endif

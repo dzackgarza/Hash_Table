@@ -12,13 +12,14 @@
 
 #include "DLList.h"
 #include "Record.h"
-#define MAX_HASH_SIZE 10
+#define MAX_HASH_SIZE 2000
 
 class HashTable
 {
     DLList contents[MAX_HASH_SIZE];
 
 public:
+
 // Post: An empty HashTable is created and initialized
 HashTable( );
 
@@ -45,7 +46,11 @@ void Delete ( const KeyType& key );
 // Post: Returns true if there is nothing in the HashTable
 bool IsEmpty ( ) const;
 
-void PrintTable();
+//void PrintTable();
+
+//unsigned getCollisions(unsigned position);
+
+//DLList& getList(unsigned position);
 
 private:
 

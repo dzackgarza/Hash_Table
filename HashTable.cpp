@@ -34,7 +34,8 @@ ItemType HashTable::Retrieve ( const KeyType& k )
     {
         unsigned key = Hash_Function(k);
         contents[key].Reset();
-        while ( !(contents[key].EndOfList()) )
+        // Stop searching when we reach an item bigger than the key.
+        while ( !(contents[key].EndOfList()) && contents[key].CurrentItem().Key() <= k )
         {
             if ( contents[key].CurrentItem().Key() == k)
                 return contents[key].CurrentItem();
@@ -47,7 +48,7 @@ ItemType HashTable::Retrieve ( const KeyType& k )
 
 void HashTable::Delete ( const KeyType& k )
 {
-    // Return immediately if position of key is empty.
+    // Return immediately if list at key's position is empty.
     if (!IsEmpty())
     {
         unsigned key = Hash_Function(k);
@@ -86,18 +87,46 @@ unsigned HashTable::Hash_Function( const KeyType& R) const
     for (unsigned i = 0; i < R.length(); i++)
     {
         // Sum the values of each character, weighted by its position in the STRING.
-        index += (R[i] << 5) * (i+1) + (35*R[i]) % MAX_HASH_SIZE;
+        index += R[i]*i;
+
     }
+
     // Modulo, so it will fit into the Hash Table
-    return (index % MAX_HASH_SIZE);
+    return (index% MAX_HASH_SIZE);
 }
 
+/*
 void HashTable::PrintTable()
 {
     for(unsigned i = 0; i < MAX_HASH_SIZE; i++)
     {
-        cout << "Index: " <<i<<" || Contents: "<<endl;
+        cout << "Index: " << i << " || Contents: " <<endl;
         contents[i].Display();
         cout << "-----------------------------------"<<endl;
     }
 }
+
+unsigned HashTable::getCollisions(unsigned i)
+{
+    unsigned collided_nodes = 0;
+    unsigned collisions = 0;
+    if (!contents[i].IsEmpty())
+    {
+        contents[i].Reset();
+        contents[i].Advance();
+        while(!contents[i].EndOfList())
+        {
+            collisions++;
+            contents[i].Advance();
+        }
+        contents[i].Reset();
+    }
+    return (collisions);
+}
+
+DLList& HashTable::getList(unsigned position)
+{
+    contents[position].Reset();
+    return contents[position];
+}
+*/

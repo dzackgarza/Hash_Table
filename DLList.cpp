@@ -111,13 +111,28 @@ void DLList::Display ( void )
 //list is ordered from first key to last key.
 void DLList::OrderedInsert ( const ItemType& ITEM )
 {
+    Reset();
     if ( IsEmpty() )
         InsertAfter(ITEM);
     else
     {
-        Reset();
         while (cursor->next != NULL && ITEM > cursor->next->data)
             Advance();
         InsertAfter(ITEM);
     }
 }
+
+unsigned DLList::getLength()
+{
+    Reset();
+    if (IsEmpty()) return 0;
+    unsigned items = 0;
+    while (!EndOfList())
+    {
+        items++;
+        Advance();
+    }
+    Reset();
+    return items;
+}
+
